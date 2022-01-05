@@ -10,12 +10,13 @@ function setup() {
 
     capture = createCapture(VIDEO);
     capture.size(windowWidth, windowHeight);
+   
 }
 
 function draw() {
     background(255);
     image(capture, 0,0, windowWidth, windowHeight);
-    filter(INVERT);
+    filter(BLUR, 3);
 }
 
 // function mousePressed() {
