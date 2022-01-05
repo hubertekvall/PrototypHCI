@@ -16,7 +16,7 @@ function setup() {
 function draw() {
     background(255);
     image(capture, 0,0, windowWidth, windowHeight);
-    filter(BLUR, 3);
+
 }
 
 // function mousePressed() {
