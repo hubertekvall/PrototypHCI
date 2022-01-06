@@ -30,7 +30,7 @@ function getPalette() {
 function preload() {
     img = loadImage('test.png');
 }
-
+ 
 function setup() {
     createCanvas(windowWidth, windowHeight);
     noStroke();
