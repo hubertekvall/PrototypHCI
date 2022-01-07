@@ -9,8 +9,8 @@ let state = {
 };
 
 
-function getPalette(image) {
-    image.loadPixels();
+function getPalette() {
+    capture.loadPixels();
     let quantizeArray = [];
     let pixels = img.pixels;
 
@@ -75,7 +75,7 @@ function draw() {
 function touchEnded() {
     if(state.PHOTO_MODE === true){
         state.PHOTO_MODE = false;
-        getPalette(capture);
+        getPalette();
         capture.hide();
     }
 }
