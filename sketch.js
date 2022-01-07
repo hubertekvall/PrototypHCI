@@ -1,11 +1,16 @@
 
 
 let capture;
-let img;
 let palette;
+let state = {
+    PHOTO_MODE: true,
+    PALETTE_MODE: false,
+    PLAY_MODE: false
+};
 
-function getPalette() {
-    img.loadPixels();
+
+function getPalette(image) {
+    image.loadPixels();
     let quantizeArray = [];
     let pixels = img.pixels;
 
@@ -23,13 +28,12 @@ function getPalette() {
     let maximumColorCount = 10;
     let colorMap = MMCQ.quantize(quantizeArray, maximumColorCount);
     palette = colorMap.palette();
-    console.log(palette);
 }
 
 
-function preload() {
-    img = loadImage('test.png');
-}
+// function preload() {
+//     img = loadImage('test.png');
+// }
  
 function setup() {
     createCanvas(windowWidth, windowHeight);
@@ -37,11 +41,9 @@ function setup() {
     background(0);
 
 
-    getPalette();
-    // capture = createCapture(VIDEO);
-    // capture.size(windowWidth, windowHeight);
 
-
+    capture = createCapture(VIDEO);
+    capture.size(windowWidth, windowHeight);
 }
 
 
@@ -56,8 +58,13 @@ function drawPalette(){
 
 function draw() {
     background(255);
+    if(state.PHOTO_MODE === true){
+        image(capture, 0, 0, windowWidth, windowHeight );
+    }
 
-    drawPalette();
+    else if(state.PALETTE_MODE === true){
+        drawPalette();
+    }
 }
 
 
@@ -65,9 +72,13 @@ function draw() {
 //     color = "BLUE";
 // }
 
-// function mouseReleased() {
-//     color = "RED";
-// }
+function touchEnded() {
+    if(state.PHOTO_MODE === true){
+        state.PHOTO_MODE = false;
+        getPalette(capture);
+        capture.hide();
+    }
+}
 
 
 
