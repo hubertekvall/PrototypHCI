@@ -2,11 +2,7 @@
 
 let capture;
 let palette;
-let state = {
-    PHOTO_MODE: true,
-    PALETTE_MODE: false,
-    PLAY_MODE: false
-};
+let state = "PHOTO";
 
 
 function getPalette(img) {
@@ -60,12 +56,15 @@ function drawPalette(){
 
 function draw() {
     background(255);
-    if(state.PHOTO_MODE === true){
-        image(capture, 0, 0, windowWidth, windowHeight );
-    }
+    switch(state){
+        case "PHOTO":
+            image(capture, 0, 0, windowWidth, windowHeight );
+        break;
 
-    else if(state.PALETTE_MODE === true){
-        drawPalette();
+        case "PALETTE":
+            drawPalette();
+        break;
+
     }
 }
 
@@ -75,11 +74,11 @@ function draw() {
 // }
 
 function touchEnded() {
-    if(state.PHOTO_MODE === true){
-        state.PHOTO_MODE = false;
-        state.PALETTE_MODE = true;
-        getPalette(capture);
-        
+    switch(state){
+        case "PHOTO":
+            getPalette(capture);
+            state = "PALETTE"
+        break;
     }
 }
 
