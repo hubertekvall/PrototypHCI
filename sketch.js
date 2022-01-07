@@ -77,6 +77,7 @@ function draw() {
 function touchEnded() {
     if(state.PHOTO_MODE === true){
         state.PHOTO_MODE = false;
+        state.PALETTE_MODE = true;
         getPalette(capture);
         
     }
