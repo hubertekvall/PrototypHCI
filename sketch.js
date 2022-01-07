@@ -28,6 +28,7 @@ function getPalette(img) {
     let maximumColorCount = 10;
     let colorMap = MMCQ.quantize(quantizeArray, maximumColorCount);
     palette = colorMap.palette();
+    console.log(palette);
 }
 
 
