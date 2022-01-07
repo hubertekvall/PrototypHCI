@@ -79,6 +79,10 @@ function touchEnded() {
             getPalette(capture);
             state = "PALETTE"
         break;
+
+        case "PALETTE":
+            state = "PHOTO"
+            break;
     }
 }
 
