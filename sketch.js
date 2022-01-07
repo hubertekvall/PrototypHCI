@@ -69,9 +69,18 @@ function draw() {
 }
 
 
-// function mousePressed() {
-//     color = "BLUE";
-// }
+function mouseReleased() {
+    switch(state){
+        case "PHOTO":
+            getPalette(capture);
+            state = "PALETTE"
+        break;
+
+        case "PALETTE":
+            state = "PHOTO"
+            break;
+    }
+}
 
 function touchEnded() {
     switch(state){
