@@ -9,8 +9,8 @@ let state = {
 };
 
 
-function getPalette() {
-    capture.loadPixels();
+function getPalette(img) {
+    img.loadPixels();
     let quantizeArray = [];
     let pixels = img.pixels;
 
@@ -44,6 +44,7 @@ function setup() {
 
     capture = createCapture(VIDEO);
     capture.size(windowWidth, windowHeight);
+    capture.hide();
 }
 
 
@@ -75,8 +76,8 @@ function draw() {
 function touchEnded() {
     if(state.PHOTO_MODE === true){
         state.PHOTO_MODE = false;
-        getPalette();
-        capture.hide();
+        getPalette(capture);
+        
     }
 }
 
