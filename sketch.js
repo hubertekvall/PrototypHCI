@@ -38,17 +38,21 @@ async function getPalette() {
 let hueAngle;
 let saturationDistance;
 let tintColor;
+
+
+
+
 function setup() {
     createCanvas(windowWidth, windowHeight);
     noStroke();
     background(0);
-    tintColor  = color(255);
+    tintColor  = color(0);
 
 
 
     photoButton = select("#photoButton");
     captureButton = select("#captureButton");
-    
+
     toggleMode("PHOTO");
     captureBuffer = createGraphics(windowWidth, windowHeight);
     captureMask = createGraphics(capture.width - 50, capture - height - 50);
@@ -294,7 +298,7 @@ function toggleMode(mode) {
             captureButton.hide();
             photoButton.show();
             getPalette();
-            tintColor = color(255, 255, 255,255);
+            tintColor = color(0);
             generatePlayData();
             break;
 
