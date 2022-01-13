@@ -28,18 +28,21 @@ async function getPalette() {
     }
 
 
-    let maximumColorCount = 5;
+    let maximumColorCount = 7;
     let colorMap = MMCQ.quantize(quantizeArray, maximumColorCount);
     palette = colorMap.palette();
 
 }
 
 
-
+let hueAngle;
+let saturationDistance;
+let tintColor;
 function setup() {
     createCanvas(windowWidth, windowHeight);
     noStroke();
     background(0);
+    tintColor  = color(255);
 
 
 
@@ -50,6 +53,7 @@ function setup() {
     toggleMode("PHOTO");
     captureBuffer = createGraphics(windowWidth, windowHeight);
     captureMask = createGraphics(capture.width - 50, capture - height - 50);
+
 }
 
 
@@ -80,41 +84,96 @@ function createVideoCapture() {
 
 
 
-function drawPalette() {
+// function drawPalette() {
 
-    for (let i = 0; i < palette.length; i++) {
-        fill(palette[i][0], palette[i][1], palette[i][2]);
-        rect(width / palette.length * i, 0, width / palette.length, height);
-    }
-}
+//     for (let i = 0; i < palette.length; i++) {
+//         fill(palette[i][0], palette[i][1], palette[i][2]);
+//         rect(width / palette.length * i, 0, width / palette.length, height);
+//     }
+// }
 
 
 let playGridData = [];
+let backgroundGridFill;
+const columnCount = 8;
+const rowCount = 8;
+
+function getRandomPaletteColor(){
+    let randColorIDX = int(Math.random() * 7);
+
+    return color(palette[randColorIDX][0], palette[randColorIDX][1], palette[randColorIDX][2])
+}
+
 
 function generatePlayData() {
-    for (let x = 0; x < width / 32; x++) {
+    playGridData = [];
 
-        for (let y = 0; y < height / 32; y++) {
-            let idx = int(Math.random() * 5);
-            playData.push({
-                color: palette[idx],
+
+    backgroundGridFill = getRandomPaletteColor();
+
+    let rowsAvailable = rowCount;
+    let y = 0;
+    while (rowsAvailable > 0) {
+        let rowLength = int(Math.random() * 2) + 1;
+        if (rowLength > rowsAvailable) rowLength = rowsAvailable;
+        rowsAvailable -= rowLength;
+
+
+        let columnsAvailable = columnCount;
+        let x = 0;
+        while (columnsAvailable > 0) {
+
+            let columnLength = int(Math.random() * 2) + 1;
+            if (rowLength > rowsAvailable) columnLength = columnsAvailable;
+            columnsAvailable -= columnLength;
+
+
+
+
+            playGridData.push({
+
+                rowLength: rowLength,
+                columnLength: columnLength,
                 x: x,
-                y: y
-
+                y: y,
+                color: getRandomPaletteColor(),
+                completion: 0,
+                direction: int(Math.random() * 2)
             });
 
-            console.log(palette[idx]);
+            x += columnLength;
         }
 
+        y += rowLength;
+
     }
+
+
+    // }
+
+
+
 }
 
 function drawPlay() {
-    background(0);
 
-    playData.forEach(element => {
-        fill(element.color[0], element.color[1], element.color[2]);
-        rect(element.x * 32, element.y * 32, 32, 32);
+    let rowsHeight = height / rowCount;
+    let columnWidth = width / columnCount;
+    background(backgroundGridFill);
+    playGridData.forEach(element => {
+        fill(element.color);
+
+        let elWidth = element.columnLength * columnWidth;
+        let elHeight = element.rowLength * rowsHeight;
+
+        element.completion = lerp(element.completion, 1, 0.05);
+        if(element.direction == 0){
+            rect(element.x * columnWidth, element.y * rowsHeight, elWidth , elHeight * element.completion);
+        }
+        else{
+            rect(element.x * columnWidth, element.y * rowsHeight, elWidth * element.completion, elHeight);
+        }
+       
     });
 }
 
@@ -126,38 +185,54 @@ let dMoveX;
 let dMoveY;
 
 
-function mutateColors(){
-    if(palette === undefined) return;
-    palette.forEach(element => {
-        let c = color(element[0], element[1], element[2]);
-        
-        console.log(red(c));
+// function mutateColors(){
+//     if(palette === undefined) return;
+//     palette.forEach(element => {
+//         let c = color(element[0], element[1], element[2]);
 
-        let h = hue(c);
-        let s = saturation(c);
-        let b = brightness(c);
+//         console.log(red(c));
 
-        colorMode(HSB);
-        if(dMoveX > 0) console.log("YEAAAHAA");
-        else if(dMoveX < 0) console.log("buuuhuuu");
+//         let h = hue(c);
+//         let s = saturation(c);
+//         let b = brightness(c);
 
-        h %= 360;
-        let nc = color(h, s, b);
-        colorMode(RGB);
+//         colorMode(HSB);
+//         if(dMoveX > 0) console.log("YEAAAHAA");
+//         else if(dMoveX < 0) console.log("buuuhuuu");
 
-        // let interp = lerpColor(c, nc, dist(red(c), green(c), blue(c), red(nc), green(nc), blue(nc) ));
-        element[0] = red(nc);
-        element[1] = green(nc);
-        element[2] = blue(nc);
-    });
+//         h %= 360;
+//         let nc = color(h, s, b);
+//         colorMode(RGB);
+
+//         // let interp = lerpColor(c, nc, dist(red(c), green(c), blue(c), red(nc), green(nc), blue(nc) ));
+//         element[0] = red(nc);
+//         element[1] = green(nc);
+//         element[2] = blue(nc);
+//     });
+// }
+
+
+
+function touchMoved() {
+    dMoveX = (mouseX - pmouseX) / width;
+    dMoveY = (pmouseY - mouseY) / height;
+
+    colorMode(HSB);
+    let angle = degrees(atan2(mouseY - width/ 2, mouseX - height/2));
+
+    let v1 = createVector(mouseX, mouseY);
+    let v2 = createVector(width/2, height/2);
+    let cdist = v1.sub(v2).normalize().magSq();
+    let newColor = color(angle, cdist * 100, 100);
+    tintColor = lerpColor(tintColor, newColor, 0.05);
+    colorMode(RGB);
+    // mutateColors();
 }
 
-
-function touchMoved(){
-    dMoveX = (mouseX - pmouseX) / width;
-    dMoveY = (pmouseY - mouseY) / height; 
-   
-    mutateColors();
+function touchEnded(){
+    if(state === "PALETTE"){
+        generatePlayData();
+    }
 }
 
 
@@ -165,8 +240,9 @@ let isShaking = false;
 
 
 
-function deviceShaken(){
-    isShaking = true;
+function deviceShaken() {
+
+   if(state === "PLAY") generatePlayData();
 }
 
 
@@ -176,20 +252,19 @@ function draw() {
 
     switch (state) {
         case "PHOTO":
-            image(capture, 0, 0, width , width * capture.height / capture.width );
-            break;
-
-        case "PALETTE":
-            drawPalette();
+            image(capture, 0, 0, width, width * capture.height / capture.width);
             break;
 
         case "PLAY":
-            recordShaking();
             drawPlay();
+            blendMode(EXCLUSION);
+            fill(tintColor);
+            rect(0,0, width, height);
+            blendMode(BLEND);
             break;
     }
-   
-    
+
+
 
 
     fill('red');
@@ -223,18 +298,13 @@ function toggleMode(mode) {
             createVideoCapture();
             break;
 
-        case "PALETTE":
+        case "PLAY":
             captureButton.hide();
             photoButton.show();
             getPalette();
+            generatePlayData();
             break;
 
-        // case "PLAY":
-        //     generatePlayData();
-        //     playButton.hide();
-        //     photoButton.show();
-        //     captureButton.show();
-        //     break;
     }
 
     state = mode;
