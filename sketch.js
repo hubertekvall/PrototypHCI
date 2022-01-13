@@ -122,9 +122,42 @@ function drawPlay() {
 
 
 
+let dMoveX;
+let dMoveY;
+
+
+function mutateColors(){
+    if(palette === undefined) return;
+    palette.forEach(element => {
+        let c = color(element[0], element[1], element[2]);
+        
+        console.log(red(c));
+
+        let h = hue(c);
+        let s = saturation(c);
+        let b = brightness(c);
+
+        colorMode(HSB);
+        if(dMoveX > 0) console.log("YEAAAHAA");
+        else if(dMoveX < 0) console.log("buuuhuuu");
+
+        h %= 360;
+        let nc = color(h, s, b);
+        colorMode(RGB);
+
+        // let interp = lerpColor(c, nc, dist(red(c), green(c), blue(c), red(nc), green(nc), blue(nc) ));
+        element[0] = red(nc);
+        element[1] = green(nc);
+        element[2] = blue(nc);
+    });
+}
+
 
 function touchMoved(){
-    console.log(pmouseX, pmouseY);
+    dMoveX = (mouseX - pmouseX) / width;
+    dMoveY = (pmouseY - mouseY) / height; 
+   
+    mutateColors();
 }
 
 
@@ -155,8 +188,8 @@ function draw() {
             drawPlay();
             break;
     }
-
-
+   
+    
 
 
     fill('red');
