@@ -302,6 +302,7 @@ function toggleMode(mode) {
             captureButton.hide();
             photoButton.show();
             getPalette();
+            tintColor = color(255, 255, 255,255);
             generatePlayData();
             break;
 
