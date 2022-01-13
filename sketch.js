@@ -48,8 +48,7 @@ function setup() {
 
     photoButton = select("#photoButton");
     captureButton = select("#captureButton");
-    // playButton = select("#playMode");
-
+    
     toggleMode("PHOTO");
     captureBuffer = createGraphics(windowWidth, windowHeight);
     captureMask = createGraphics(capture.width - 50, capture - height - 50);
@@ -84,13 +83,6 @@ function createVideoCapture() {
 
 
 
-// function drawPalette() {
-
-//     for (let i = 0; i < palette.length; i++) {
-//         fill(palette[i][0], palette[i][1], palette[i][2]);
-//         rect(width / palette.length * i, 0, width / palette.length, height);
-//     }
-// }
 
 
 let playGridData = [];
